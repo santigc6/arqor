@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # inicializar variables
+aux=$(expr 1301 + 9)
+P=$(expr $aux % 10)
+echo $P
 Ninicio=100
 Npaso=16
 Nfinal=$((Ninicio + 100))
