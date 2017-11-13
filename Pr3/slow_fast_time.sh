@@ -21,24 +21,34 @@ fPNG=slow_fast_time.png
 # borrar el fichero DAT y el fichero PNG
 rm -f $fDAT $fPNG
 
-# generar el fichero DAT vacío
-touch $fDAT
+echo Introduzca el numero de repeticiones:
+read Nreps
 
 echo "Ejecutando slow y fast..."
 # bucle para N desde inicio a fin
 #for N in $(seq $Ninicio $Npaso $Nfinal);
-for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
-	echo "N: $N / $Nfinal..."
+for ((K = 0 ; K < $Nreps ; K += 1)); do
+	#Generamos un fichero por repetición
+	fAUX=aux_rep_$K.dat
+	touch $fAUX
+	for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
+		echo "N: $N / $Nfinal..."
 	
-	# ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
-	# para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
-	# tercera columna (el valor del tiempo). Dejar los valores en variables
-	# para poder imprimirlos en la misma línea del fichero de datos
-	slowTime=$(./slow $N | grep 'time' | awk '{print $3}')
-	fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
+		# ejecutar los programas slow y fast consecutivamente con tamaño de matriz N
+		# para cada uno, filtrar la línea que contiene el tiempo y seleccionar la
+		# tercera columna (el valor del tiempo). Dejar los valores en variables
+		# para poder imprimirlos en la misma línea del fichero de datos
+		slowTime=$(./slow $N | grep 'time' | awk '{print $3}')
+		fastTime=$(./fast $N | grep 'time' | awk '{print $3}')
 
-	echo "$N	$slowTime	$fastTime" >> $fDAT
+		echo "$N	$slowTime	$fastTime" >> $fAUX
+	done
 done
+
+#Calculamos la media para cada tamaño
+#Fichero con todos los tiempos de las múltiples repeticiones
+cat aux_rep_* > all.dat 
+awk -v Nrep="$Nreps" '{n_slow[$1] = n_slow[$1] + $2; n_fast[$1] = n_fast[$1] + $3;} END{for(valor in n_slow) print valor" "(n_slow[valor]/Nrep)" "(n_fast[valor]/Nrep);}' all.dat | sort -nk1 > $fDAT
 
 echo "Generating plot..."
 # llamar a gnuplot para generar el gráfico y pasarle directamente por la entrada
@@ -57,4 +67,4 @@ replot
 quit
 END_GNUPLOT
 
-rm -rf slow fast
+rm -rf slow fast all.dat aux_rep_*
