@@ -1,23 +1,31 @@
 #!/bin/bash
 
+make clean
+make
+chmod ugo+x slow
+chmod ugo+x fast
 # inicializar variables
 aux=$(expr 1301 + 9)
 P=$(expr $aux % 10)
-echo $P
-Ninicio=100
-Npaso=16
-Nfinal=$((Ninicio + 100))
+echo Valor de P: $P
+Ninicio=$((10000 + 1024*$P))
+echo Inicio: $Ninicio
+Npaso=64
+echo Paso: $Npaso
+Nfinal=$((10000 + 1024*($P+1)))
+echo Final: $Nfinal
+
 fDAT=slow_fast_time.dat
 fPNG=slow_fast_time.png
 
 # borrar el fichero DAT y el fichero PNG
-rm -f $fDAT fPNG
+rm -f $fDAT $fPNG
 
 # generar el fichero DAT vacío
 touch $fDAT
 
-echo "Running slow and fast..."
-# bucle para N desde P hasta Q 
+echo "Ejecutando slow y fast..."
+# bucle para N desde inicio a fin
 #for N in $(seq $Ninicio $Npaso $Nfinal);
 for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
 	echo "N: $N / $Nfinal..."
@@ -48,3 +56,5 @@ plot "$fDAT" using 1:2 with lines lw 2 title "slow", \
 replot
 quit
 END_GNUPLOT
+
+rm -rf slow fast
