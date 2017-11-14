@@ -29,21 +29,27 @@ echo "Ejecutando slow y fast..."
 for((Csize=1024 ; Csize <= 8192 ; Csize = Csize*2)); do
 	for ((K = 0 ; K < $Nreps ; K += 1)); do
 		#Generamos un fichero por repetición
-		fAUX=aux_rep_$K.dat
+		fAUX=aux_rep_$Csize_$K.dat
 		touch $fAUX
 		for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
 			echo "N: $N / $Nfinal..."
 
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8000000,1,64 --cachegrind-out-file=slow_out.dat ./slow $N
-			cg_annotate slow_out. dat | head -n 30
+			cg_annotate slow_out. dat | grep "PROGRAM TOTALS" >
+			awk '' >
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8000000,1,64 --cachegrind-out-file=fast_out.dat ./fast $N
-			cg_annotate fast_out. dat | head -n 30
+			cg_annotate fast_out. dat | grep "PROGRAM TOTALS" >
+			awk '' >
 			echo "$Csize	$N	$slowTime	$fastTime" >> $fAUX
 		done
 	done
 done
 
-cat aux_rep_* > all.dat 
+cat aux_rep_1024_* > all_1024.dat
+cat aux_rep_2048_* > all_2048.dat
+cat aux_rep_4096_* > all_4096.dat
+cat aux_rep_8192_* > all_8192.dat
+
 awk -v Nrep="$Nreps" '{n_slow[$1] = n_slow[$1] + $2; n_fast[$1] = n_fast[$1] + $3;} END{for(valor in n_slow) print valor" "(n_slow[valor]/Nrep)" "(n_fast[valor]/Nrep);}' all.dat | sort -nk1 > $fDAT
 
 echo "Generating plot..."
