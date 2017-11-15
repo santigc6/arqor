@@ -33,9 +33,9 @@ for((Csize=1024 ; Csize <= 8192 ; Csize = Csize*2)); do
 			echo "N: $N / $Nfinal..."
 
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8388608,1,64 --cachegrind-out-file=slow_out.dat ./slow $N
-			slow_failures=$(cg_annotate slow_out.dat | grep "PROGRAM TOTALS" | awk 'BEGIN{FS=" "} {print $5" "$7}')
+			slow_failures=$(cg_annotate slow_out.dat | grep "PROGRAM TOTALS" | awk 'BEGIN{FS=" "} {print $5" "$8}')
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8388608,1,64 --cachegrind-out-file=fast_out.dat ./fast $N
-			fast_failures=$(cg_annotate fast_out.dat | grep "PROGRAM TOTALS" | awk 'BEGIN{FS=" "} {print $5" "$7}')
+			fast_failures=$(cg_annotate fast_out.dat | grep "PROGRAM TOTALS" | awk 'BEGIN{FS=" "} {print $5" "$8}')
 			
 			echo "$N $slow_failures $fast_failures" >> $fAUX
 		done
