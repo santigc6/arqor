@@ -48,10 +48,6 @@ int main( int argc, char *argv[]){
 	gettimeofday(&fin,NULL);
 	printf("Execution time: %f\n", ((fin.tv_sec*1000000+fin.tv_usec)-(ini.tv_sec*1000000+ini.tv_usec))*1.0/1000000.0);
 
-    for(i = 0; i < n; i++){
-        printf("%lf %lf %lf     %lf %lf %lf     %lf %lf %lf\n", m1[i][0], m1[i][1], m1[i][2],  m2[i][0], m2[i][1], m2[i][2],  res[i][0], res[i][1], res[i][2]);
-    }
-
 	freeMatrix(m1);
     freeMatrix(m2);
     freeMatrix(res);
