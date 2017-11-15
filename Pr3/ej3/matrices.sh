@@ -32,7 +32,7 @@ fPNG2=mult_cache_read.png
 fPNG3=mult_cache_write.png
 fAUX=all.dat # Fichero para tiempos
 fAUXF=allF.dat # Fichero para tiempos
-
+fAUX2=auxi.dat
 # Borrar el fichero DAT y el fichero PNG
 rm -f $fFINAL $fPNG1 $fPNG2 $fPNG3
 
@@ -69,15 +69,17 @@ awk -v Nrep="$Nreps" '{n_normal[$1] = n_normal[$1] + $2; n_trans[$1] = n_trans[$
 
 #Media para fallos
 sed -i 's/,//g' $fAUXF # Eliminamos las comas para poder operar
-awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $2; mw[$1] = mw[$1] + $3;} END {for(valor in mr) print (mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL1
-awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(valor in mr) print (mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL2
+awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $2; mw[$1] = mw[$1] + $3;} END {for(valor in mr) print valor" "(mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL1
+awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(valor in mr) print (valor" "mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL2
 
 # Generamos el fichero pedido en el enunciado con el siguiente formato:
-# <N> <tiempo “normal”> <D1mr “normal”> <D1mw “normal”> <tiempo “trasp”> < D1mr “trasp”> <D1mw “trasp”>
+# <N> <tiempo “normal”> N <D1mr “normal”> <D1mw “normal”> <tiempo “trasp”> N < D1mr “trasp”> <D1mw “trasp”>
 > $fFINAL
 awk '{print $1" "$2}' $fDAT >> aux1.dat
 awk '{print $3}' $fDAT >> aux2.dat
-paste aux1.dat $fFAIL1 aux2.dat $fFAIL2 >> $fFINAL
+paste aux1.dat $fFAIL1 aux2.dat $fFAIL2 >> $fAUX2
+
+awk '{print $1" "$2" "$4" "$5" "$6" "$8" "$9}' $fAUX2 > $fFINAL
 
 # Generamos las gráficas
 echo "Generando gráficas de tiempos..."
@@ -97,7 +99,7 @@ END_GNUPLOT
 
 echo "Generando gráficas de de fallos de lectura"
 gnuplot << END_GNUPLOT
-set title "Normal/Transposed Matrix Product Execution Time"
+set title "Normal/Transposed Matrix Product Read Failures"
 set ylabel "Failures"
 set xlabel "Matrix Size"
 set key right bottom
@@ -126,4 +128,4 @@ replot
 quit
 END_GNUPLOT
 
-rm -rf multiplicar multiplicar_t $fAUX aux1.dat aux2.dat $fDAT *.o $fAUXF $fFAIL1 $fFAIL2
+rm -rf multiplicar multiplicar_t *.o $fAUX aux1.dat aux2.dat $fDAT $fAUXF $fFAIL1 $fFAIL2 $fAUX2
