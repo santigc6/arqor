@@ -15,7 +15,7 @@ echo Paso: $Npaso
 Nfinal=$((2000 + 1024*($P+1)))
 echo Final: $Nfinal
 
-rm -f 
+rm -f cache_*
 
 echo Introduzca el numero de repeticiones:
 read Nreps
@@ -52,21 +52,47 @@ awk -v Nrep="$Nreps" '{r_slow[$1] = r_slow[$1] + $2; w_slow[$1] = w_slow[$1] + $
 awk -v Nrep="$Nreps" '{r_slow[$1] = r_slow[$1] + $2; w_slow[$1] = w_slow[$1] + $3; r_fast[$1] = r_fast[$1] + $4; w_fast[$1] = w_fast[$1] + $5;} END{for(valor in r_slow) print valor" "(r_slow[valor]/Nrep)" "(w_slow[valor]/Nrep)" "(r_fast[valor]/Nrep)" "(w_fast[valor]/Nrep);}' all_4096.dat | sort -nk1 > cache_4096.dat
 awk -v Nrep="$Nreps" '{r_slow[$1] = r_slow[$1] + $2; w_slow[$1] = w_slow[$1] + $3; r_fast[$1] = r_fast[$1] + $4; w_fast[$1] = w_fast[$1] + $5;} END{for(valor in r_slow) print valor" "(r_slow[valor]/Nrep)" "(w_slow[valor]/Nrep)" "(r_fast[valor]/Nrep)" "(w_fast[valor]/Nrep);}' all_8192.dat | sort -nk1 > cache_8192.dat
 
-#echo "Generating plot..."
+echo "Generating plots..."
 ## llamar a gnuplot para generar el gráfico y pasarle directamente por la entrada
 ## estándar el script que está entre "<< END_GNUPLOT" y "END_GNUPLOT"
-#gnuplot << END_GNUPLOT
-#set title "Slow-Fast Failures"
-#set ylabel "Execution time (s)"
-#set xlabel "Matrix Size"
-#set key right bottom
-#set grid
-#set term png
-#set output "$fPNG"
-#plot "$fDAT" using 1:2 with lines lw 2 title "slow", \
-#     "$fDAT" using 1:3 with lines lw 2 title "fast"
-#replot
-#quit
-#END_GNUPLOT
+gnuplot << END_GNUPLOT
+set title "Slow-Fast Read Failures"
+set ylabel "Failures"
+set xlabel "Matrix Size"
+set key right bottom
+set grid
+set term png
+set output "cache_lectura.png"
+plot "cache_1024.dat" using 1:2 with lines lw 2 title "slow_1024", \
+     "cache_1024.dat" using 1:4 with lines lw 2 title "fast_1024", \
+     "cache_2048.dat" using 1:2 with lines lw 2 title "slow_2048", \
+     "cache_2048.dat" using 1:4 with lines lw 2 title "fast_2048", \
+     "cache_4096.dat" using 1:2 with lines lw 2 title "slow_4096", \
+     "cache_4096.dat" using 1:4 with lines lw 2 title "fast_4096", \
+     "cache_8192.dat" using 1:2 with lines lw 2 title "slow_8192", \
+     "cache_8192.dat" using 1:4 with lines lw 2 title "fast_8192"
+replot
+quit
+END_GNUPLOT
+
+gnuplot << END_GNUPLOT
+set title "Slow-Fast Write Failures"
+set ylabel "Failures"
+set xlabel "Matrix Size"
+set key right bottom
+set grid
+set term png
+set output "cache_escritura.png"
+plot "cache_1024.dat" using 1:3 with lines lw 2 title "slow_1024", \
+     "cache_1024.dat" using 1:5 with lines lw 2 title "fast_1024", \
+     "cache_2048.dat" using 1:3 with lines lw 2 title "slow_2048", \
+     "cache_2048.dat" using 1:5 with lines lw 2 title "fast_2048", \
+     "cache_4096.dat" using 1:3 with lines lw 2 title "slow_4096", \
+     "cache_4096.dat" using 1:5 with lines lw 2 title "fast_4096", \
+     "cache_8192.dat" using 1:3 with lines lw 2 title "slow_8192", \
+     "cache_8192.dat" using 1:5 with lines lw 2 title "fast_8192"
+replot
+quit
+END_GNUPLOT
 
 rm -rf slow fast all_*.dat aux_rep_*
