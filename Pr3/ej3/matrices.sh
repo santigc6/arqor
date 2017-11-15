@@ -43,24 +43,24 @@ echo "Ejecutando la multiplicacion de matrices..."
 
 
 for ((K = 0 ; K < $Nreps ; K += 1)); do
-    echo "Comenzando repetición $K"
-    fFAILn=cacheN.dat
-    fFAILt=cacheT.dat
+    	echo "Comenzando repetición $K"
+    	fFAILn=cacheN.dat
+    	fFAILt=cacheT.dat
 	touch $fAUX
 	for ((N = Ninicio ; N <= Nfinal ; N += Npaso)); do
 		echo "N: $N / $Nfinal..."
-        > $fFAILn # Dejamos en blanco los archivos
-        > $fFAILt # Dejamos en blanco los archivos
-	normalTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILn -q ./multiplicar $N | grep 'time' | awk '{print $3}')
-	transTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILt -q ./multiplicar_t $N | grep 'time' | awk '{print $3}')
-        # Guardando fichero temporal con tiempos
+        	> $fFAILn # Dejamos en blanco los archivos
+        	> $fFAILt # Dejamos en blanco los archivos
+		normalTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILn -q ./multiplicar $N | grep 'time' | awk '{print $3}')
+		transTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILt -q ./multiplicar_t $N | grep 'time' | awk '{print $3}')
+        	# Guardando fichero temporal con tiempos
 		echo "$N	$normalTime	$transTime" >> $fAUX
-        # Guardando fichero temporal con fallos de memoria
-        FAIL1=$(cg_annotate $fFAILn | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult normal D1mr y D1mw
-        FAIL2=$(cg_annotate $fFAILt | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult traspuesta D1mr y D1mw$fDAT $fPNG1 $fPNG2
-        echo "$N	$FAIL1	$FAIL2" >> $fAUXF
+        	# Guardando fichero temporal con fallos de memoria
+        	FAIL1=$(cg_annotate $fFAILn | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult normal D1mr y D1mw
+        	FAIL2=$(cg_annotate $fFAILt | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult traspuesta D1mr y D1mw$fDAT $fPNG1 $fPNG2
+       		echo "$N	$FAIL1	$FAIL2" >> $fAUXF
 	done
-    rm $fFAILn $fFAILt
+    	rm $fFAILn $fFAILt
 done
 
 #Calculamos la media para cada tamaño
@@ -78,7 +78,6 @@ awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(val
 awk '{print $1" "$2}' $fDAT >> aux1.dat
 awk '{print $3}' $fDAT >> aux2.dat
 paste aux1.dat $fFAIL1 aux2.dat $fFAIL2 >> $fAUX2
-sed -i 's/\\t/ /g' $fAUX2 #Ya que el paste inserta tabulaciones en lugar de espacios
 
 awk '{print $1" "$2" "$4" "$5" "$6" "$8" "$9}' $fAUX2 > $fFINAL
 
