@@ -16,11 +16,11 @@ chmod ugo+x multiplicar_t
 aux=$(expr 1301 + 9)
 P=$(expr $aux % 10)
 echo Valor de P: $P
-Ninicio=1  #$((256 + 256*$P))
+Ninicio=$((256 + 256*$P))
 echo Inicio: $Ninicio
-Npaso=1
+Npaso=16
 echo Paso: $Npaso
-Nfinal=20 #$((256 + 256*($P+1)))
+Nfinal=$((256 + 256*($P+1)))
 echo Final: $Nfinal
 
 fDAT=mult_time.dat
@@ -51,14 +51,14 @@ for ((K = 0 ; K < $Nreps ; K += 1)); do
 		echo "N: $N / $Nfinal..."
         > $fFAILn # Dejamos en blanco los archivos
         > $fFAILt # Dejamos en blanco los archivos
-		normalTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILn -q ./multiplicar $N | grep 'time' | awk '{print $3}')
-		transTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILt -q ./multiplicar_t $N | grep 'time' | awk '{print $3}')
+	normalTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILn -q ./multiplicar $N | grep 'time' | awk '{print $3}')
+	transTime=$(valgrind --tool=cachegrind --cachegrind-out-file=$fFAILt -q ./multiplicar_t $N | grep 'time' | awk '{print $3}')
         # Guardando fichero temporal con tiempos
 		echo "$N	$normalTime	$transTime" >> $fAUX
         # Guardando fichero temporal con fallos de memoria
         FAIL1=$(cg_annotate $fFAILn | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult normal D1mr y D1mw
         FAIL2=$(cg_annotate $fFAILt | grep 'PROGRAM TOTALS' | awk 'BEGIN{FS=" "} {print $5" "$8}') # De la mult traspuesta D1mr y D1mw$fDAT $fPNG1 $fPNG2
-        echo "$N    $FAIL1  $FAIL2" >> $fAUXF
+        echo "$N	$FAIL1	$FAIL2" >> $fAUXF
 	done
     rm $fFAILn $fFAILt
 done
@@ -70,7 +70,7 @@ awk -v Nrep="$Nreps" '{n_normal[$1] = n_normal[$1] + $2; n_trans[$1] = n_trans[$
 #Media para fallos
 sed -i 's/,//g' $fAUXF # Eliminamos las comas para poder operar
 awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $2; mw[$1] = mw[$1] + $3;} END {for(valor in mr) print valor" "(mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL1
-awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(valor in mr) print (valor" "mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL2
+awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(valor in mr) print valor" "(mr[valor]/Nrep)" "(mw[valor]/Nrep)}' allF.dat | sort -nk1 > $fFAIL2
 
 # Generamos el fichero pedido en el enunciado con el siguiente formato:
 # <N> <tiempo “normal”> N <D1mr “normal”> <D1mw “normal”> <tiempo “trasp”> N < D1mr “trasp”> <D1mw “trasp”>
@@ -78,6 +78,7 @@ awk -v Nrep="$Nreps" '{mr[$1] = mr[$1] + $4; mw[$1] = mw[$1] + $5;} END {for(val
 awk '{print $1" "$2}' $fDAT >> aux1.dat
 awk '{print $3}' $fDAT >> aux2.dat
 paste aux1.dat $fFAIL1 aux2.dat $fFAIL2 >> $fAUX2
+sed -i 's/\\t/ /g' $fAUX2 #Ya que el paste inserta tabulaciones en lugar de espacios
 
 awk '{print $1" "$2" "$4" "$5" "$6" "$8" "$9}' $fAUX2 > $fFINAL
 
