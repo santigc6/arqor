@@ -33,9 +33,16 @@ for((Csize=1024 ; Csize <= 8192 ; Csize = Csize*2)); do
 			echo "N: $N / $Nfinal..."
 
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8388608,1,64 --cachegrind-out-file=slow_out.dat ./slow $N
-			slow_failures=$(cg_annotate slow_out.dat | grep "PROGRAM TOTALS" | awk -F" |," '{print $9$10" "$15$16}')
+			cg_annotate slow_out.dat | grep "PROGRAM TOTALS" | awk '{print $5" "$8}' > aux.dat
+			sed -i 's/,//g' aux.dat #Quitamos las comas de los numeros
+			slow_failures=$(cat aux.dat)
+			rm -f aux.dat
+			
 			valgrind --tool=cachegrind --I1=$Csize,1,64 --D1=$Csize,1,64 --LL=8388608,1,64 --cachegrind-out-file=fast_out.dat ./fast $N
-			fast_failures=$(cg_annotate fast_out.dat | grep "PROGRAM TOTALS" | awk -F" |," '{print $9$10" "$15$16}')
+			cg_annotate fast_out.dat | grep "PROGRAM TOTALS" | awk '{print $5" "$8}' > aux1.dat
+			sed -i 's/,//g' aux1.dat #Quitamos las comas de los numeros
+			fast_failures=$(cat aux1.dat)
+			rm -f aux1.dat
 			
 			echo "$N $slow_failures $fast_failures" >> $fAUX
 		done
@@ -63,14 +70,14 @@ set key right bottom
 set grid
 set term png
 set output "cache_lectura.png"
-plot "cache_1024.dat" using 1:2 with lines lw 2 title "slow_1024", \
-     "cache_1024.dat" using 1:4 with lines lw 2 title "fast_1024", \
-     "cache_2048.dat" using 1:2 with lines lw 2 title "slow_2048", \
-     "cache_2048.dat" using 1:4 with lines lw 2 title "fast_2048", \
-     "cache_4096.dat" using 1:2 with lines lw 2 title "slow_4096", \
-     "cache_4096.dat" using 1:4 with lines lw 2 title "fast_4096", \
-     "cache_8192.dat" using 1:2 with lines lw 2 title "slow_8192", \
-     "cache_8192.dat" using 1:4 with lines lw 2 title "fast_8192"
+plot "cache_1024.dat" using 1:2 with lines lw 2 title "slow1024", \
+     "cache_1024.dat" using 1:4 with lines lw 2 title "fast1024", \
+     "cache_2048.dat" using 1:2 with lines lw 2 title "slow2048", \
+     "cache_2048.dat" using 1:4 with lines lw 2 title "fast2048", \
+     "cache_4096.dat" using 1:2 with lines lw 2 title "slow4096", \
+     "cache_4096.dat" using 1:4 with lines lw 2 title "fast4096", \
+     "cache_8192.dat" using 1:2 with lines lw 2 title "slow8192", \
+     "cache_8192.dat" using 1:4 with lines lw 2 title "fast8192"
 replot
 quit
 END_GNUPLOT
@@ -83,16 +90,16 @@ set key right bottom
 set grid
 set term png
 set output "cache_escritura.png"
-plot "cache_1024.dat" using 1:3 with lines lw 2 title "slow_1024", \
-     "cache_1024.dat" using 1:5 with lines lw 2 title "fast_1024", \
-     "cache_2048.dat" using 1:3 with lines lw 2 title "slow_2048", \
-     "cache_2048.dat" using 1:5 with lines lw 2 title "fast_2048", \
-     "cache_4096.dat" using 1:3 with lines lw 2 title "slow_4096", \
-     "cache_4096.dat" using 1:5 with lines lw 2 title "fast_4096", \
-     "cache_8192.dat" using 1:3 with lines lw 2 title "slow_8192", \
-     "cache_8192.dat" using 1:5 with lines lw 2 title "fast_8192"
+plot "cache_1024.dat" using 1:3 with lines lw 2 title "slow1024", \
+     "cache_1024.dat" using 1:5 with lines lw 2 title "fast1024", \
+     "cache_2048.dat" using 1:3 with lines lw 2 title "slow2048", \
+     "cache_2048.dat" using 1:5 with lines lw 2 title "fast2048", \
+     "cache_4096.dat" using 1:3 with lines lw 2 title "slow4096", \
+     "cache_4096.dat" using 1:5 with lines lw 2 title "fast4096", \
+     "cache_8192.dat" using 1:3 with lines lw 2 title "slow8192", \
+     "cache_8192.dat" using 1:5 with lines lw 2 title "fast8192"
 replot
 quit
 END_GNUPLOT
 
-rm -rf slow fast all_*.dat aux_rep_*
+rm -rf slow fast all_*.dat aux_rep_* slow_out.dat fast_out.dat
