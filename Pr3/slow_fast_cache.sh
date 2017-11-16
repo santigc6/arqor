@@ -6,7 +6,7 @@ chmod ugo+x slow
 chmod ugo+x fast
 # inicializar variables
 aux=$(expr 1301 + 33)
-P=$(expr $aux % 10)
+P=$(expr $aux % 3)
 echo Valor de P: $P
 Ninicio=$((2000 + 1024*$P))
 echo Inicio: $Ninicio
