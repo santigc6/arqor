@@ -5,7 +5,7 @@ make
 chmod ugo+x slow
 chmod ugo+x fast
 # inicializar variables
-aux=$(expr 1301 + 9)
+aux=$(expr 1301 + 33)
 P=$(expr $aux % 10)
 echo Valor de P: $P
 Ninicio=$((2000 + 1024*$P))
