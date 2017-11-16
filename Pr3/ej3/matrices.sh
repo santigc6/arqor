@@ -14,7 +14,7 @@ chmod ugo+x multiplicar_t
 # Inicializamos variables
 
 aux=$(expr 1301 + 33)
-P=$(expr $aux % 10)
+P=$(expr $aux % 3)
 echo Valor de P: $P
 Ninicio=$((256 + 256*$P))
 echo Inicio: $Ninicio
