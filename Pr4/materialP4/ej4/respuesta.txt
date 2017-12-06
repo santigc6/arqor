@@ -1,0 +1,34 @@
+4.1 ¿Cuantos rectángulos?
+
+Se está diviendo el segmento [0,1] en n partes, en este caso n = 100000000 = 10^8
+
+4.2 y 4.3 Diferencia entre 1 y 4
+
+Ambos dividen el trabajo entre el número de threads, si hay dos threads los rectangulos pares los calcula uno y los impares el otro.
+En la versión 1 se hacen los cálculos sobre un array de doubles compartido, al que accedemos cada vez que realizamos el cálculo del área de un rectángulo en todos los hilos (que es un bucle for de 10^8/threads iteraciones para cada uno de ellos). La versión 4 tarda considerablemente menos tiempo, ya que en vez de acceder a este array compartido realiza la suma en una variable privada a parte y al final del bloque de ejecución en paralelo añade este valor al array. Por ello estamos observando que el tiempo de acceso a una variable privada del hilo es mucho menor que el de acceder al array compartido. En ambas el resultado es el mismo.
+
+El tiempo medio de ejecución calculado con un script auxiliar es el siguiente para 10 repeticiones:
+Tiempo medio version 1: 0.391752
+Tiempo medio version 2: 0.390592
+Tiempo medio version 3: 0.352729
+Tiempo medio version 4: 0.350618
+
+
+En la versión 2 obtenemos un tiempo muy similar al de la version 1, por lo que los cambios no son nada significativos, ni en tiempo ni en resultado de pi. La única diferencia en el código que podemos encontrar es que declaramos el array sum en la región de ejecución paralela como firstprivate, de esta manera cada una de las variables se crea su versión privada del array y trabaja sobre él. Como el resultado apenas varía se intuye que el problema puede estar en trabajar con un array.
+
+En la versión 3 los cambios son más complejos. Tomamos el tamaño del bloque de caché y calculamos cuantas variables de tipo double caben dentro de este. Esta vez el array tiene una casilla por thread y por cada uno de los elementos que caben en una sola línea de caché. De esta manera solo trabajamos en las casillas con indice tid*padsz. Por tanto cuando cargamos en caché el array solo una de las casillas tiene un dato valido y cuesta menos en ejecución, ya que el resto de casillas no son modificadas y no hay que volver a cargar el dato en caché de nuevo.
+
+Es decir, de las otras maneras cargabamos y descargábamos la misma fila constantemente ya que las iban utilizando el resto de procesos alternadamente. El caso es por qué el ejercicio 2 si era privado tiene unos resultados tan malos.
+
+Distintos valores de ejecución (recordar que mi cache line size es de 64 bytes):
+- 1: 0.538664
+- 2: 0.540830
+- 4: 0.398306
+- 6: 0.390385
+- 7: 0.395494
+- 8: 0.347658
+- 9: 0.350232
+- 10: 0.350356
+- 12: 0.348526
+
+Cuando sobrepasamos el valor 4 notamos mucha diferencia, ya que el bloque de caché solo va a ser moficado en ese proceso, para tamaños mayores que cuatro sigue teniendo un buen tiempo, pero es un desperdicio de memoria.
