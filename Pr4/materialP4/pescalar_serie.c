@@ -5,15 +5,24 @@
 #include <stdlib.h>
 #include "arqo4.h"
 
-int main(void)
+int main(int argc, char** argv)
 {
 	float *A=NULL, *B=NULL;
 	long long k=0;
 	struct timeval fin,ini;
 	float sum=0;
+	int tam=0;
 	
-	A = generateVector(M);
-	B = generateVector(M);
+	if(argc <= 1 || argc >=3){
+		perror("Se espera un tamanio como argumento de entrada");
+		
+		return 1;
+	}
+	
+	tam = atoi(argv[1]);
+	
+	A = generateVector(tam);
+	B = generateVector(tam);
 	if ( !A || !B )
 	{
 		printf("Error when allocationg matrix\n");
@@ -25,7 +34,7 @@ int main(void)
 	gettimeofday(&ini,NULL);
 	/* Bloque de computo */
 	sum = 0;
-	for(k=0;k<M;k++)
+	for(k=0;k<tam;k++)
 	{
 		sum = sum + A[k]*B[k];
 	}
