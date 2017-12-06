@@ -7,6 +7,7 @@
 
 #define N 1000ull
 #define M 1000000ull
+#define P ((33 % 8) + 1)
 
 float ** generateMatrix(int);
 float ** generateEmptyMatrix(int);
