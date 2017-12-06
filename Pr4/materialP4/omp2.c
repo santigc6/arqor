@@ -10,6 +10,12 @@ int main(int argc, char *argv[])
 	int tid;
 	int a,b,c;
 
+	if(argc != 1){
+		fprintf(stderr, "Error, no se esperan argumentos de entrada\n");
+		
+		return 1;
+	}
+
 	a = 1;
 	b = 2;
 	c = 3;
