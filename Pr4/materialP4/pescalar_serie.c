@@ -1,6 +1,5 @@
 // ----------- Arqo P4-----------------------
 // pescalar_serie
-//
 
 #include <stdio.h>
 #include <stdlib.h>
