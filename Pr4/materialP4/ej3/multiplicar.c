@@ -10,7 +10,7 @@ void multiply_l2(tipo **matrix1, tipo **matrix2, tipo **res, int n, int n_thread
 void multiply_l3(tipo **matrix1, tipo **matrix2, tipo **res, int n, int n_threads);
 
 int main( int argc, char *argv[]){
-	int n;
+    int n;
     int n_threads;
     int ser_par;
 	tipo **m1=NULL;

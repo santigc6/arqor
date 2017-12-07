@@ -4,7 +4,7 @@ rm -f ej2/*
 i=0
 max_int=2147483647
 max_tam=2010000000
-min_tam=25000000
+min_tam=6500000
 tam=0
 incr=$(((max_tam-min_tam)/10))
 max_hilos=4

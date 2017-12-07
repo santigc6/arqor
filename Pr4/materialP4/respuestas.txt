@@ -1,6 +1,6 @@
 //Respuestas a las preguntas de la práctica
 ----------------------------------------------------------------------------------------------------------------------------------
-1.1 ¿ Se pueden lanzar más threads que cores tenga el sistema? ¿Tiene sentido hacerlo?
+1.1 ¿ Se pueden lanzar más zthreads que cores tenga el sistema? ¿Tiene sentido hacerlo?
 -Se puede pero no tiene sentido hacerlo, ya que cada se lanzan para ser ejecutados en paralelo, y exceder el número de núcleos va a provocar que se acaben ejecutando algunos en serie.
 
 1.2 ¿Cuántos threads debería utilizar en los ordenadores del laboratorio? ¿y en su propio equipo?
@@ -24,3 +24,30 @@
 2.2 ¿A qué se debe esta diferencia?
 Esta diferencia (entre los dos productos escalares en paralelo) se debe a añadir "reduction(+:sum)" a "#pragma omp parallel for", que es utilizado para operaciones colectivas sobre elementos de un array.
 ----------------------------------------------------------------------------------------------------------------------------------
+1000x1000
+Version/#hilos	1	2	3	4
+Serie	5.828815	5.828815	5.828815	5.828815
+P1	7.575487	4.844575	5.920705	4.958625
+P2	7.137533	3.797559	4.984338	3.729065
+P3	7.097872	3.717722	3.926198	3.431592
+
+1000x1000
+Version/#hilos	1	2	3	4
+Serie
+P1
+P2
+P3
+
+2000x2000
+Version/#hilos	1	2	3	4
+Serie
+P1
+P2
+P3
+
+2000x2000
+Version/#hilos	1	2	3	4
+Serie
+P1
+P2
+P3
