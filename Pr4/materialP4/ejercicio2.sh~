@@ -6,7 +6,7 @@ max_int=2147483647
 max_tam=2010000000
 min_tam=25000000
 tam=0
-incr=$(((max_tam-min_tam)/10))
+incr=$((max_tam/10))
 max_hilos=4
 n_hilos=0
 reps=5
@@ -18,6 +18,9 @@ for((i = 0; i < $reps; i++)); do
 		for((n_hilos = 0; n_hilos < $max_hilos; n_hilos++)); do 
 			./pescalar_par2 $tam $n_hilos | grep "Tiempo" | awk -v "t=$tam" '{print t" "$2}' >> ej2/pesc_paralelo_$n_hilos.dat 
 		done
+		if [ $tam -eq $min_tam ]; then
+			tam=$incr
+		fi
 	done
 done
 
