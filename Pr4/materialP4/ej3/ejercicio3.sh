@@ -11,15 +11,15 @@ incr=64
 reps=5
 for((i = 0; i < $reps; i++)); do
 	echo "Repeticion $i"
-	for((tam=$min_tam; tam < $max_tam; tam += $incr)); do
+	for((tam=$min_tam; tam <= $max_tam; tam += $incr)); do
 		echo "	Tamanio $tam"
-		./multiplicar $tam 0 0 | grep "time" | awk -v -v "t=$tam" '{print t" "$3}' >> mult_serie.dat
-		./multiplicar $tam 3 4  | grep "time" | awk -v "t=$tam" '{print t" "$3}' >> mult_paralelo3_4.dat
+		./multiplicar $tam 0 0 | grep "time" | awk -v t="$tam" '{print t" "$3}' >> mult_serie.dat
+		./multiplicar $tam 3 4  | grep "time" | awk -v t="$tam" '{print t" "$3}' >> mult_paralelo3_4.dat
 	done
 done
 
-awk -v "n=$reps" '{valores[$1]+=$2} END{for(i in valores) print i" "valores[i]/n}' mult_serie.dat | sort -nk1 > mult_serie_media.dat
-awk -v "n=$reps" '{valores[$1]+=$2} END{for(i in valores) print i" "valores[i]/n}' mult_paralelo3_4.dat | sort -nk1 > mult_paralelo3_4_media.dat
+awk -v n="$reps" '{valores[$1]+=$2} END{for(i in valores) print i" "valores[i]/n}' mult_serie.dat | sort -nk1 > mult_serie_media.dat
+awk -v n="$reps" '{valores[$1]+=$2} END{for(i in valores) print i" "valores[i]/n}' mult_paralelo3_4.dat | sort -nk1 > mult_paralelo3_4_media.dat
 
 paste mult_serie_media.dat mult_paralelo3_4_media.dat > aux4.dat
 
