@@ -42,11 +42,11 @@ set key right bottom
 set grid
 set term png
 set output "speedup.png"
-plot "speedups.dat" using 1:2 with lines lw 2 title "p_serie", \
-     "speedups.dat" using 1:3 with lines lw 2 title "p_par_1", \
-     "speedups.dat" using 1:4 with lines lw 2 title "p_par_2", \
-     "speedups.dat" using 1:5 with lines lw 2 title "p_par_3", \
-     "speedups.dat" using 1:6 with lines lw 2 title "p_par_4"
+plot "speedups.dat" using 1:2 with lines lw 2 title "pserie", \
+     "speedups.dat" using 1:3 with lines lw 2 title "ppar1", \
+     "speedups.dat" using 1:4 with lines lw 2 title "ppar2", \
+     "speedups.dat" using 1:5 with lines lw 2 title "ppar3", \
+     "speedups.dat" using 1:6 with lines lw 2 title "ppar4"
 replot
 quit
 END_GNUPLOT
@@ -59,11 +59,11 @@ set key right bottom
 set grid
 set term png
 set output "times.png"
-plot "pesc_serie_media.dat" using 1:2 with lines lw 2 title "p_serie", \
-     "pesc_paralelo_1_media.dat" using 1:2 with lines lw 2 title "p_par_1", \
-     "pesc_paralelo_2_media.dat" using 1:2 with lines lw 2 title "p_par_2", \
-     "pesc_paralelo_3_media.dat" using 1:2 with lines lw 2 title "p_par_3", \
-     "pesc_paralelo_4_media.dat" using 1:2 with lines lw 2 title "p_par_4"
+plot "pesc_serie_media.dat" using 1:2 with lines lw 2 title "pserie", \
+     "pesc_paralelo_1_media.dat" using 1:2 with lines lw 2 title "ppar1", \
+     "pesc_paralelo_2_media.dat" using 1:2 with lines lw 2 title "ppar2", \
+     "pesc_paralelo_3_media.dat" using 1:2 with lines lw 2 title "ppar3", \
+     "pesc_paralelo_4_media.dat" using 1:2 with lines lw 2 title "ppar4"
 replot
 quit
 END_GNUPLOT
