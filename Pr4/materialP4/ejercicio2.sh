@@ -3,7 +3,7 @@ make
 rm -f ej2/*
 i=0
 max_tam=800000000
-min_tam=100000000
+min_tam=10000000
 tam=0
 incr=$(((max_tam-min_tam)/10))
 max_hilos=4
