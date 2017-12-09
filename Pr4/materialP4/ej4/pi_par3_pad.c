@@ -29,7 +29,7 @@ int main( int argc, char *argv[] )
 	fgets(buf, sizeof(buf), f);
 	pclose(f);
 	linesz = atoi(buf);
-	padsz = linesz/datasz;
+	padsz = atoi(argv[1]);
     printf("%d\n", padsz);
 	printf("Cache line size: %d bytes => padding: %d elementos\n", linesz, padsz);
 
